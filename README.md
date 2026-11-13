@@ -1,10 +1,10 @@
-<!-- TODO before publishing: replace YOUR_USERNAME with your Buy Me a Coffee handle here AND in src/template.html (then run `npm run build`), and put your name in LICENSE. -->
+<!-- TODO before publishing: put your name in LICENSE. -->
 
 <h1 align="center">Lens Cap Maker</h1>
 <p align="center"><b>Custom engraved lens caps for the DJI Osmo Action 5 Pro. Type your text, pick a grip, download the STL.</b></p>
 
 <p align="center">
-  <a href="https://buymeacoffee.com/YOUR_USERNAME"><img alt="Buy Me a Coffee" src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?style=for-the-badge&logo=buymeacoffee&logoColor=black"></a>
+  <a href="https://buymeacoffee.com/sgeo"><img alt="Buy me a Coffee" src="https://img.shields.io/badge/Buy%20me%20a%20Coffee-ffdd00?style=for-the-badge&logo=buymeacoffee&logoColor=black"></a>
   &nbsp;
   <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-blue?style=for-the-badge">
   &nbsp;
@@ -21,7 +21,7 @@ This project is **free and open source (MIT)**. There is no account, no watermar
 
 If it saved you time, or you printed a few caps and liked them, a coffee is appreciated and never expected.
 
-<p align="center"><a href="https://buymeacoffee.com/YOUR_USERNAME"><img alt="Buy me a coffee" src="https://img.shields.io/badge/%E2%98%95%20Buy%20me%20a%20coffee-ffdd00?style=for-the-badge&logoColor=black"></a></p>
+<p align="center"><a href="https://buymeacoffee.com/sgeo"><img alt="Buy me a Coffee" src="https://img.buymeacoffee.com/button-api/?text=Buy%20me%20a%20Coffee&emoji=%E2%98%95&slug=sgeo&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff" height="60"></a></p>
 
 ## What you get
 
@@ -34,13 +34,22 @@ If it saved you time, or you printed a few caps and liked them, a coffee is appr
 
 <p align="center"><img src="images/ui.png" alt="Screenshot of the Lens Cap Maker interface" width="80%"></p>
 
+## Ways to use it
+
+| Option | How | Needs |
+| --- | --- | --- |
+| **Online (GitHub Pages)** | Open `https://<your-user>.github.io/<repo>/` | A browser. The live site is the same `index.html`. |
+| **Download and run offline** | Download `index.html` from this repo (or the whole zip) and double-click it | A browser. No install, no internet (only the coffee button needs internet). |
+| **Ready-made STLs** | Grab a file from [`examples/`](examples) | A slicer. |
+| **Build from source** | `npm install && npm run build` | Node.js. See [Build from source](#build-from-source). |
+
+**Deploying your own copy on GitHub Pages:** push the repo, then **Settings → Pages → Build and deployment → Deploy from a branch → `main` / `(root)` → Save**. After a minute the site is live at the address above.
+
 ## Quick start
 
 1. Open **`index.html`** in Chrome, Edge, Firefox or Safari (double-click it; it works offline).
 2. Type your text, choose a grip and a fit.
 3. Click **Export STL** and slice it.
-
-Want it online? Push this repo to GitHub, then **Settings → Pages → Deploy from branch → `main` / root**. The tool is then live at `https://<your-user>.github.io/<repo>/`.
 
 Don't want the tool at all? [`examples/`](examples) has ready-made STLs ("YOUR TEXT", fluted grip) in all three fits.
 
@@ -121,7 +130,7 @@ How it works: the cap is built with solid-geometry booleans in [manifold-3d](htt
 
 It is free and will stay free. If you want to say thanks:
 
-<p align="center"><a href="https://buymeacoffee.com/YOUR_USERNAME"><img alt="Buy Me a Coffee" src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?style=for-the-badge&logo=buymeacoffee&logoColor=black"></a></p>
+<p align="center"><a href="https://buymeacoffee.com/sgeo"><img alt="Buy me a Coffee" src="https://img.buymeacoffee.com/button-api/?text=Buy%20me%20a%20Coffee&emoji=%E2%98%95&slug=sgeo&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff" height="60"></a></p>
 
 Stars, bug reports, photos of your prints and pull requests are just as welcome.
 
