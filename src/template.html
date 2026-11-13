@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lens Cap Maker – DJI Osmo Action 5 Pro</title>
+<style>
+  :root {
+    --bg: #0f1218; --panel: #171b24; --line: #272d3a; --text: #e8ebf2; --muted: #8b93a7;
+    --accent: #ff7a1a; --accent-ink: #1a0d00;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    background: var(--bg); color: var(--text);
+    font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    display: grid; grid-template-columns: 340px 1fr;
+  }
+  aside {
+    background: var(--panel); border-right: 1px solid var(--line);
+    padding: 22px 20px; display: flex; flex-direction: column; gap: 18px; overflow-y: auto;
+  }
+  h1 { font-size: 18px; margin: 0; letter-spacing: .2px; }
+  .sub { color: var(--muted); font-size: 13px; margin-top: 2px; }
+  label { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: .8px; color: var(--muted); margin-bottom: 6px; }
+  textarea, input[type=number], select {
+    width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--line);
+    background: #0f131b; color: var(--text); font: inherit;
+  }
+  textarea { resize: vertical; min-height: 4.2em; line-height: 1.35; }
+  textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+  input[type=range] { width: 100%; accent-color: var(--accent); }
+  .row { display: flex; justify-content: space-between; align-items: baseline; }
+  .row span { color: var(--muted); font-size: 13px; }
+  button {
+    font: inherit; font-weight: 600; border: 0; border-radius: 10px; padding: 12px 14px; cursor: pointer;
+  }
+  #exportBtn { background: var(--accent); color: var(--accent-ink); font-size: 16px; }
+  #exportBtn:disabled { opacity: .4; cursor: default; }
+  #exportBtn:not(:disabled):hover { filter: brightness(1.08); }
+  #resetBtn { background: transparent; color: var(--muted); border: 1px solid var(--line); font-weight: 500; }
+  #resetBtn:hover { color: var(--text); }
+  #status { font-size: 13px; color: var(--muted); min-height: 1.4em; }
+  #note { font-size: 13px; color: #ffb36b; }
+  .coffee { display: block; text-align: center; text-decoration: none; background: #ffdd00; color: #111; font-weight: 600;
+    padding: 10px 14px; border-radius: 10px; font-size: 14px; }
+  .coffee:hover { filter: brightness(.95); }
+  .tips { font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 14px; margin-top: auto; }
+  .tips b { color: var(--text); font-weight: 600; }
+  .tips ul { margin: 6px 0 0; padding-left: 18px; }
+  #stage { position: relative; min-width: 0; min-height: 0;
+    background: radial-gradient(ellipse at 50% 40%, #232a3a 0%, var(--bg) 70%); }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .hint { position: absolute; left: 16px; bottom: 12px; font-size: 12px; color: var(--muted); pointer-events: none; }
+  @media (max-width: 760px) {
+    body { grid-template-columns: 1fr; grid-template-rows: 48vh auto; }
+    aside { order: 2; border-right: 0; border-top: 1px solid var(--line); }
+    #stage { order: 1; }
+  }
+</style>
+</head>
+<body>
+<aside>
+  <div>
+    <h1>Lens Cap Maker</h1>
+    <div class="sub">DJI Osmo Action 5 Pro · engraved text · STL export</div>
+  </div>
+
+  <div>
+    <div class="row"><label for="text">Text</label><span id="textCount"></span></div>
+    <textarea id="text" rows="3" maxlength="120" autocomplete="off" spellcheck="false">YOUR TEXT</textarea>
+    <div class="sub" style="margin-top:6px">Enter starts a new line. Long text wraps and shrinks to fit the cap. Built in: Latin, Greek, Cyrillic, Vietnamese, symbols and emoji.</div>
+  </div>
+  <div>
+    <div class="row"><label for="size">Text size</label><span id="sizeVal">100%</span></div>
+    <input id="size" type="range" min="50" max="100" value="100">
+  </div>
+  <div>
+    <label for="grip">Grip style</label>
+    <select id="grip"></select>
+  </div>
+  <div>
+    <div class="row"><label for="count">Grip density</label><span id="countVal">28</span></div>
+    <input id="count" type="range" min="10" max="48" value="28">
+  </div>
+  <div>
+    <label for="fit">Fit (inner diameter)</label>
+    <select id="fit">
+      <option value="35">35.0 mm – tight</option>
+      <option value="35.3" selected>35.3 mm – standard (start here)</option>
+      <option value="35.6">35.6 mm – loose / larger rubber ring</option>
+      <option value="custom">Custom…</option>
+    </select>
+    <div id="customWrap" hidden style="margin-top:8px">
+      <input id="custom" type="number" min="30" max="45" step="0.1" value="35.3">
+    </div>
+  </div>
+
+  <div id="note"></div>
+  <button id="exportBtn" disabled>Export STL</button>
+  <button id="resetBtn">Reset view</button>
+  <div id="status">Starting…</div>
+
+  <a class="coffee" href="https://buymeacoffee.com/YOUR_USERNAME" target="_blank" rel="noopener">☕ Free forever – buy me a coffee</a>
+  <div class="tips">
+    <b>Printing tips</b>
+    <ul>
+      <li>Print with the text face on the bed, open end up. No supports.</li>
+      <li>0.2 mm layers, 3 walls. For two-colour text pause at 0.8 mm (before layer 5) and swap filament.</li>
+      <li>Measure your lens ring, then pick the fit. Too tight? Choose a larger size.</li>
+    </ul>
+  </div>
+</aside>
+<main id="stage">
+  <canvas id="canvas"></canvas>
+  <div class="hint">Drag to rotate · scroll to zoom · right-drag to pan</div>
+</main>
+<script>/*__BUNDLE__*/</script>
+</body>
+</html>

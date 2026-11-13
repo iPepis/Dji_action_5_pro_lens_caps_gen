@@ -1,0 +1,19 @@
+{
+  "name": "lens-cap-maker",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Custom engraved lens caps for the DJI Osmo Action 5 Pro: type text, pick a grip, export STL.",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node scripts/test-core.mjs",
+    "render": "node scripts/render.mjs"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "manifold-3d": "^3.5.4",
+    "opentype.js": "^2.0.0",
+    "three": "^0.187.0"
+  }
+}
