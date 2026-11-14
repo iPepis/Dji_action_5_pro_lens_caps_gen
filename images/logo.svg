@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 96" width="128" height="96" role="img" aria-label="Blue baseball cap">
+  <path d="M18 62C18 30 38 12 64 12s46 18 46 50z" fill="#2f6df6"/>
+  <path d="M64 12C52 24 48 42 50 62M64 12c12 12 16 30 14 50" fill="none" stroke="#1d4fc4" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="64" cy="11" r="5" fill="#1d4fc4"/>
+  <path d="M16 62h96c10 0 18 4 18 10 0 6-10 8-24 8H40C26 80 12 76 12 68c0-4 2-6 4-6z" fill="#1d4fc4"/>
+  <path d="M16 62h96" stroke="#7fa6ff" stroke-width="3" stroke-linecap="round"/>
+</svg>

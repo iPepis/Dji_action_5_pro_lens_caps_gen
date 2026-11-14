@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Lens Cap Maker – DJI Osmo Action 5 Pro</title>
+<title>Lens 🧢</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ctext y=%27.9em%27 font-size=%2790%27%3E🧢%3C/text%3E%3C/svg%3E">
 <style>
   :root {
     --bg: #0f1218; --panel: #171b24; --line: #272d3a; --text: #e8ebf2; --muted: #8b93a7;
@@ -59,10 +60,14 @@
 <body>
 <aside>
   <div>
-    <h1>Lens Cap Maker</h1>
-    <div class="sub">DJI Osmo Action 5 Pro · engraved text · STL export</div>
+    <h1>Lens <span style="font-size:1.45em;line-height:1;vertical-align:-0.12em">🧢</span></h1>
+    <div class="sub">Action camera lens caps · engraved text · STL export</div>
   </div>
 
+  <div>
+    <label for="cam">Camera</label>
+    <select id="cam"><option value="" selected disabled>Pick Your Action Cam</option></select>
+  </div>
   <div>
     <div class="row"><label for="text">Text</label><span id="textCount"></span></div>
     <textarea id="text" rows="3" maxlength="120" autocomplete="off" spellcheck="false">YOUR TEXT</textarea>
@@ -81,16 +86,17 @@
     <input id="count" type="range" min="10" max="48" value="28">
   </div>
   <div>
-    <label for="fit">Fit (inner diameter)</label>
+    <label for="fit">Fit</label>
     <select id="fit">
-      <option value="35">35.0 mm – tight</option>
-      <option value="35.3" selected>35.3 mm – standard (start here)</option>
-      <option value="35.6">35.6 mm – loose / larger rubber ring</option>
-      <option value="custom">Custom…</option>
+      <option value="-0.3">Tight (-0.3 mm)</option>
+      <option value="0" selected>Standard (start here)</option>
+      <option value="0.3">Loose (+0.3 mm)</option>
+      <option value="custom">Custom size (mm)…</option>
     </select>
     <div id="customWrap" hidden style="margin-top:8px">
-      <input id="custom" type="number" min="30" max="45" step="0.1" value="35.3">
+      <input id="custom" type="number" min="15" max="60" step="0.1" value="35.3">
     </div>
+    <div class="sub" style="margin-top:6px">Printers are not all calibrated the same, so a cap can come out tighter or looser than the numbers say. If yours does, pick Tight or Loose, or choose Custom size and type your own mm (the inner diameter, or the side of a square pocket).</div>
   </div>
 
   <div id="note"></div>

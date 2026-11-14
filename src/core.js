@@ -191,6 +191,76 @@ function gripCutter({ Manifold, CrossSection }, style, n, R0, IR, z0, H) {
   return Manifold.extrude(negative, len).translate([0, 0, z0]);
 }
 
+// ---------- cameras ----------
+// bore = inner diameter of the cap at the "standard" fit; depth = how deep the cap sits over the lens (fixed per camera, not user-editable).
+// Sizes come from measuring the pocket of existing community caps (only the numbers are used). Round: bore = inner diameter.
+// Square: bore = side of the rounded-square pocket, corner = its corner radius. depth = pocket depth, fixed per camera.
+export const CAMERAS = [
+  { id: 'osmo-a5pro', name: 'DJI Osmo Action 5 Pro', bore: 35.3, depth: 8.0 },
+  // shortcut: Action 3/4 reuse the 5 Pro size because sellers list one cap for all three; no caliper data.
+  { id: 'osmo-a4', name: 'DJI Osmo Action 4', bore: 35.3, depth: 8.0 },
+  { id: 'osmo-a3', name: 'DJI Osmo Action 3', bore: 35.3, depth: 8.0 },
+  { id: 'osmo-a6', name: 'DJI Osmo Action 6', bore: 37.8, depth: 6.5 },
+  { id: 'gopro-9-12', name: 'GoPro Hero 9 / 10 / 11 / 12', shape: 'square', bore: 32.0, corner: 7.0, depth: 9.0 },
+  { id: 'gopro-11-mini', name: 'GoPro Hero 11 Mini', shape: 'square', bore: 32.0, corner: 8.0, depth: 6.0 },
+  { id: 'insta-one-rs-1in', name: 'Insta360 ONE RS 1-Inch', bore: 48.3, depth: 13.0 },
+  // shortcut: the reference cap has a stepped pocket (20.0 mm for 1.6 mm, then 21.7 mm); the wider size is used, so it may be loose. Upgrade when measured on a real GO 3S.
+  { id: 'insta-go3s', name: 'Insta360 GO 3S', bore: 21.7, depth: 5.1 },
+];
+export const FIT_STEPS = { tight: -0.3, standard: 0, loose: 0.3 };
+// Outer width (diameter for round caps) and height of the finished cap, for the UI.
+export function capSize(o) {
+  const wall = o.wall ?? 2.6, top = o.top ?? 2.4;
+  return { square: o.shape === 'square', width: o.boreD + 2 * wall, height: top + o.depth };
+}
+// Grip styles that work on a square cap (the rest need a round outline).
+export const SQUARE_GRIPS = ['smooth', 'fluted', 'gear', 'dimples'];
+function roundedSquare(side, r, seg = 24) {
+  const h = side / 2 - r, pts = [];
+  for (const [cx, cy, a0] of [[h, h, 0], [-h, h, 90], [-h, -h, 180], [h, -h, 270]])
+    for (let i = 0; i <= seg; i++) { const a = ((a0 + (90 * i) / seg) * Math.PI) / 180; pts.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]); }
+  return pts;
+}
+
+// Points and outward normals every `step` mm along a rounded square's outline (side, corner radius).
+function outlineSamples(side, r, n) {
+  const h = side / 2 - r, straight = 2 * h, arc = (Math.PI / 2) * r, per = 4 * (straight + arc), out = [];
+  for (let i = 0; i < n; i++) {
+    let d = (i / n) * per;
+    const seg = Math.floor(d / (straight + arc)); d -= seg * (straight + arc);
+    const ang = seg * 90;                       // the side's outward direction (deg): 0 = +x, 90 = +y ...
+    const rad = (ang * Math.PI) / 180, nx = Math.cos(rad), ny = Math.sin(rad), tx = -ny, ty = nx;
+    let x, y, na = ang;
+    if (d <= straight) { x = nx * (h + r) + tx * (d - h); y = ny * (h + r) + ty * (d - h); }
+    else {
+      const t = (d - straight) / r, a2 = rad + t, cx = nx * h + tx * h, cy = ny * h + ty * h;
+      x = cx + r * Math.cos(a2); y = cy + r * Math.sin(a2); na = (a2 * 180) / Math.PI;
+    }
+    out.push({ x, y, na });
+  }
+  return out;
+}
+
+// Grip cutter for a square cap: grooves, notches or dimples placed along the outline.
+function squareGripCutter({ Manifold, CrossSection }, style, n, side, r, z0, z1) {
+  const pts = outlineSamples(side, r, n), per = 4 * (side - 2 * r) + 2 * Math.PI * r, s = per / n, parts = [];
+  if (style === 'fluted') {
+    const fr = Math.min(1.15, 0.26 * s), cyl = Manifold.extrude(CrossSection.circle(fr, 24), z1 - z0);
+    for (const p of pts) parts.push(cyl.translate([p.x + Math.cos((p.na * Math.PI) / 180) * fr * 0.26, p.y + Math.sin((p.na * Math.PI) / 180) * fr * 0.26, z0]));
+  } else if (style === 'gear') {
+    const box = Manifold.extrude(CrossSection.square([2.4, s * 0.46], true), z1 - z0);   // sticks 1.2 mm out, 1.0 mm cut into the wall
+    for (const p of pts) parts.push(box.rotate([0, 0, p.na]).translate([p.x + Math.cos((p.na * Math.PI) / 180) * 0.2, p.y + Math.sin((p.na * Math.PI) / 180) * 0.2, z0]));
+  } else if (style === 'dimples') {
+    const rr = Math.min(1.6, s * 0.33), rowPitch = s * 0.866, rows = Math.max(1, Math.floor((z1 - 0.5 - z0 - 2 * rr) / rowPitch) + 1), ball = Manifold.sphere(rr, 20);
+    for (let row = 0; row < rows; row++) {
+      const z = z0 + rr + row * rowPitch;
+      for (const p of outlineSamples(side, r, n).map((q, i) => (row % 2 ? outlineSamples(side, r, n * 2)[i * 2 + 1] : q)))
+        parts.push(ball.translate([p.x + Math.cos((p.na * Math.PI) / 180) * (rr - 0.9), p.y + Math.sin((p.na * Math.PI) / 180) * (rr - 0.9), z]));
+    }
+  } else return null;
+  return Manifold.union(parts);
+}
+
 // ---------- cap ----------
 export function buildCap(wasm, fonts, o) {
   const { Manifold, CrossSection } = wasm;
@@ -200,20 +270,33 @@ export function buildCap(wasm, fonts, o) {
   }, o);
 
   const SEG = 160;
+  const square = opt.shape === 'square';
   const IR = opt.boreD / 2, OR = IR + opt.wall, H = opt.top + opt.depth;
   const CH = 1.2, LEAD = 0.8;
+  if (square && !SQUARE_GRIPS.includes(opt.grip)) opt.grip = 'fluted';   // other styles need a round outline
 
-  let body = Manifold.revolve(new CrossSection([[
-    [0, 0], [OR - CH, 0], [OR, CH], [OR, H],
-    [IR + LEAD, H], [IR, H - LEAD], [IR, opt.top], [0, opt.top],
-  ]]), SEG);
-
-  if (opt.grip !== 'smooth') {
-    const cut = gripCutter(wasm, opt.grip, opt.gripCount, OR, IR, CH + 1.6, H);
-    if (cut) body = body.subtract(cut);
+  let body;
+  if (square) {
+    // Rounded-square outside (convex, so the hull of its outline at three heights is exact), rounded-square pocket cut into it.
+    const so = opt.boreD + 2 * opt.wall, ro = opt.corner + opt.wall, big = roundedSquare(so, ro), small = roundedSquare(so - 2 * CH, ro - CH);
+    body = Manifold.hull([...small.map(([x, y]) => [x, y, 0]), ...big.map(([x, y]) => [x, y, CH]), ...big.map(([x, y]) => [x, y, H])]);
+    body = body.subtract(Manifold.extrude(new CrossSection([roundedSquare(opt.boreD, opt.corner)]), opt.depth + 1).translate([0, 0, opt.top]));
+    if (opt.grip !== 'smooth') {
+      const cut = squareGripCutter(wasm, opt.grip, opt.gripCount, so, ro, CH + 1.6, H + 0.5);
+      if (cut) body = body.subtract(cut);
+    }
+  } else {
+    body = Manifold.revolve(new CrossSection([[
+      [0, 0], [OR - CH, 0], [OR, CH], [OR, H],
+      [IR + LEAD, H], [IR, H - LEAD], [IR, opt.top], [0, opt.top],
+    ]]), SEG);
+    if (opt.grip !== 'smooth') {
+      const cut = gripCutter(wasm, opt.grip, opt.gripCount, OR, IR, CH + 1.6, H);
+      if (cut) body = body.subtract(cut);
+    }
   }
 
-  const { rings, em } = layoutText(fonts, opt.text, IR - 1.5, opt.sizeFactor);
+  const { rings, em } = layoutText(fonts, opt.text, (square ? opt.boreD / 2 + opt.wall : IR) - 1.5, opt.sizeFactor);
   if (opt.info) opt.info.em = em;   // lets the UI warn when the text had to get very small
   if (rings.length) {
     const txt = Manifold.extrude(new CrossSection(rings, 'NonZero'), opt.engrave + 0.2).translate([0, 0, -0.2]);

@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import Module from 'manifold-3d';
 import opentype from 'opentype.js';
-import { buildCap, manifoldToArrays, toBinarySTL, missingChars, layoutText, TEXT_MAX_LENGTH, GRIPS, DENSITY } from '../src/core.js';
+import { buildCap, manifoldToArrays, toBinarySTL, missingChars, layoutText, TEXT_MAX_LENGTH, GRIPS, DENSITY, CAMERAS } from '../src/core.js';
 import { fontFiles } from './fontlist.mjs';
 
 // Counts edges not shared by exactly two triangles, the way a slicer sees the exported STL (vertices merged at float32).
@@ -24,8 +24,10 @@ const wasm = await Module(); wasm.setup();
 const fonts = fontFiles.map((f) => { const b = fs.readFileSync(f); return opentype.parse(b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength)); });
 
 const cases = [
+  ...CAMERAS.flatMap((c) => (c.shape ? ['fluted', 'gear', 'dimples', 'smooth'] : ['fluted', 'diamond', 'smooth']).map((g) => ({ text: 'YOUR TEXT', grip: g, boreD: c.bore, depth: c.depth, shape: c.shape, corner: c.corner }))),
   ...Object.keys(GRIPS).map((g) => ({ text: 'YOUR TEXT', grip: g, gripCount: DENSITY[g] })),
   ...['diamond', 'spiral', 'dimples', 'gear', 'wavy', 'fluted'].flatMap((g) => [10, 17, 48].map((n) => ({ text: 'ΑΘΗΝΑ 🌊\nΚαλημέρα ★', grip: g, gripCount: n }))),
+  ...[10, 17, 48].flatMap((n) => ['fluted', 'gear', 'dimples'].map((g) => ({ text: 'ΑΘΗΝΑ 🌊\nKalimera', grip: g, gripCount: n, boreD: 32.3, depth: 9, shape: 'square', corner: 7 }))),
   { text: 'ΑΘΗΝΑ\nΕλλάδα' },
   { text: 'Москва\nПривет' },
   { text: 'Việt Nam\nŁódź ñ ç' },
@@ -41,7 +43,7 @@ for (const c of cases) {
   const row = { ...c, missing: miss.join(''), genus: m.genus(), vol: Math.round(m.volume()), tris: idx.length / 3, ms: Date.now() - t };
   console.log(JSON.stringify(row));
   assert.equal(m.status(), 'NoError');
-  assert.ok(m.volume() > 3500 && m.volume() < 7000, 'volume sane');
+  assert.ok(m.volume() > 1500 && m.volume() < 20000, 'volume sane');
   assert.equal(miss.length, 0, 'font chain covers the test text');
   assert.equal(openEdges(pos, idx), 0, 'STL (float32, merged vertices) must be closed: every edge shared by exactly 2 triangles');
   if (out) fs.writeFileSync(`${out}/${Object.keys(c).map((k) => c[k]).join('_').replace(/[^\w.-]+/g, '-').slice(0, 60)}.stl`, toBinarySTL(pos, idx));
@@ -64,4 +66,6 @@ assert.ok(em('W'.repeat(60)) > 0, 'one very long word is broken between characte
 assert.ok(em('Ελληνικά Кириллица ΑΘΗΝΑ 🌊★ ' + 'x'.repeat(40)) > 0, 'mixed scripts and emoji stay inside');
 assert.ok(em('YOUR TEXT', 0.5) < em('YOUR TEXT') * 0.55, 'the size slider scales the text down');
 assert.equal(layoutText(fonts, ' \n ', FIT_R).rings.length, 0, 'blank text engraves nothing');
+assert.ok(CAMERAS.length && CAMERAS.every((c) => c.bore > 15 && c.bore < 60 && c.depth >= 4 && c.depth <= 14 && (!c.shape || c.corner < c.bore / 2)), 'camera table sane');
+assert.equal(new Set(CAMERAS.map((c) => c.id)).size, CAMERAS.length, 'unique camera ids');
 console.log('OK');
