@@ -9,7 +9,7 @@
     "test": "node scripts/test-core.mjs",
     "render": "node scripts/render.mjs"
   },
-  "license": "MIT",
+  "license": "PolyForm-Noncommercial-1.0.0",
   "devDependencies": {
     "esbuild": "^0.28.2",
     "manifold-3d": "^3.5.4",

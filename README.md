@@ -5,7 +5,7 @@
 <p align="center"><b>Custom engraved lens caps for action cameras (DJI Osmo, GoPro, Insta360). Type your text, pick a grip, download the STL.</b></p>
 
 <p align="center"><a href="https://buymeacoffee.com/sgeo"><img alt="Buy me a Coffee" src="https://img.shields.io/badge/Buy%20me%20a%20Coffee-ffdd00?style=for-the-badge&logo=buymeacoffee&logoColor=black"></a></p>
-<p align="center"><b>Free and open source</b> · MIT license</p>
+<p align="center"><b>Free for everyone to use and share, never for sale</b> · PolyForm Noncommercial license</p>
 
 <p align="center"><img src="images/hero.png" alt="Three lens caps with engraved text: Greek, English and emoji, with different grip styles" width="100%"></p>
 
@@ -13,9 +13,11 @@
 
 ## It's free
 
-This project is **free and open source (MIT)**. There is no account, no watermark, no paywall, and nothing is uploaded: the whole tool is one HTML file that runs in your browser, offline.
+This project is **free to use, copy and share, but not to sell**. There is no account, no watermark, no paywall, and nothing is uploaded: the whole tool is one HTML file that runs in your browser, offline.
 
 If it saved you time, or you printed a few caps and liked them, a coffee is appreciated and never expected.
+
+**What you can and can't do:** print caps for yourself, your friends or a club, modify the tool, and share it with the license attached. You may **not** sell it, sell caps printed with it, put it or the files it makes behind ads, paywalls, memberships or tips, or use it in a business. For anything commercial, ask first (open an issue on this repo).
 
 <p align="center"><a href="https://buymeacoffee.com/sgeo"><img alt="Buy me a Coffee" src="https://img.buymeacoffee.com/button-api/?text=Buy%20me%20a%20Coffee&emoji=%E2%98%95&slug=sgeo&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff" height="60"></a></p>
 
@@ -156,7 +158,8 @@ Stars, bug reports, photos of your prints and pull requests are just as welcome.
 
 ## License and credits
 
-- Code: [MIT](LICENSE).
+- This project's own code: [PolyForm Noncommercial 1.0.0](LICENSE). Free for any non-commercial use; commercial use needs the author's permission. This is source-available, not an OSI "open source" license. Please keep the `Required Notice` line and the license text when you share it.
+- Files you export with the tool are meant for non-commercial use under the same spirit: print them and share them, but do not sell them.
 - Bundled fonts: Noto Sans, Noto Sans Symbols, Noto Sans Symbols 2 and Noto Emoji, under the [SIL Open Font License 1.1](src/fonts/OFL.txt) (via [Fontsource](https://fontsource.org)).
-- Libraries bundled into `index.html`: manifold-3d (Apache-2.0), three.js (MIT), opentype.js (MIT).
+- Libraries bundled into `index.html`: manifold-3d (Apache-2.0), three.js (MIT), opentype.js (MIT). These keep their own licenses; the non-commercial terms above apply only to this project's own code.
 - This is an independent fan project. It is **not affiliated with or endorsed by DJI, GoPro or Insta360**. "DJI", "Osmo", "GoPro", "HERO" and "Insta360" are trademarks of their respective owners.
